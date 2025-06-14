@@ -87,7 +87,7 @@ public class GC<T> extends Grafo<T> {
 		if(meta!=0) {
 			for(Vertice<T> aux : vertices) {
 				valorv=valor.toInt(aux);
-				if(valorv<=meta) {
+				if(meta>0) {
 					r_parcial= this.sumaDeVerticesBackTracking(meta-valorv, valor);
 					r_parcial.add(aux.getE());
 					if(resultado.isEmpty()||resultado.size()>r_parcial.size()) 
@@ -105,9 +105,18 @@ public class GC<T> extends Grafo<T> {
 		ArrayList<Vertice<T>> vertices=this.inicio.getAristas();
 		int valorv=0;
 		for(Vertice<T> aux : vertices) {
-			if(valor.toInt(aux)>valorv&&(meta>=valor.toInt(aux))){
-				valorv=valor.toInt(aux);
-				r_parcial=aux.getE();
+			if(valor.toInt(aux)>valorv&& meta>0 ){
+				if(meta<valor.toInt(aux)&&valorv!=0 ) {
+					if(valorv>valor.toInt(aux)) {
+						valorv=valor.toInt(aux);
+						r_parcial=aux.getE();
+					}
+				}
+				else {
+					valorv=valor.toInt(aux);
+					r_parcial=aux.getE();
+				}
+
 				
 			}
 		}
