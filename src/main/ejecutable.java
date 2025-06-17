@@ -1,6 +1,5 @@
 package main;
 
-import java.io.IOException;
 
 public class ejecutable {
 
@@ -10,8 +9,9 @@ public class ejecutable {
 		String ruta = "../TPE/pedido.txt";
 		GestorDeArchivo datos = new GestorDeArchivo(ruta);
 		if(datos.exists()) {
-			datos.backtracking();
+			
 			datos.greedy();
+			datos.backtracking();
 		}
 		//te dejo comentado el view porque vi que no era necesario en el TPE por lo que entendi
     	//datos.getMaquinas().view();
