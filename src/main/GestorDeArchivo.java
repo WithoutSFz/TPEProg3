@@ -92,11 +92,11 @@ public class GestorDeArchivo {
 			this.instanciasbk++;
 			int valor;
 			int ultimo_v=0;
-			if(meta!=0) {
+			if(meta>0) {
 				for(Maquina aux : this.maquinas) {
 					valor=aux.getProduccion();
 					
-					if(meta>0&&meta-ultimo_v>meta-valor&&meta-valor>0) {
+					if(meta-ultimo_v>meta-valor) {
 						r_parcial=this.algoBKTK(meta-valor);
 						r_parcial.add(aux);
 						if(resultado.isEmpty()||resultado.size()>r_parcial.size())
