@@ -1,6 +1,6 @@
 package main;
 
-public class Maquina  {
+public class Maquina implements Comparable<Maquina>{
 	private int numero;
 	private int produccion;
 	public Maquina(int n , int p) {
@@ -15,6 +15,11 @@ public class Maquina  {
 	}
 	public String toString() {
 		return "Maquina: "+this.numero+". Capacidad de produccion: "+this.produccion;
+	}
+	@Override
+	public int compareTo(Maquina o) {
+		Maquina aux = (Maquina)o;
+		return Integer.compare(this.getProduccion(), aux.getProduccion());
 	}
 	
 }

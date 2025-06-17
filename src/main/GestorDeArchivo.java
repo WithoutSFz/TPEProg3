@@ -1,15 +1,18 @@
 package main;
 import java.io.*;
 import java.util.ArrayList;
+import algoritmos.*;
 
 
 public class GestorDeArchivo {
-	  private ArrayList<Maquina> maquinas;
+	  	private ArrayList<Maquina> maquinas;
 	    private int produccion;
 	    private File pedido;
 	    private boolean exists;
 	    private int instanciasbk;
 	    private int instanciasgd;
+		private backtracking back;
+		private imprimir console;
 
 	    public GestorDeArchivo(String ruta){
 	        this.pedido = new File(ruta);
@@ -19,6 +22,8 @@ public class GestorDeArchivo {
 	        this.instanciasgd=0;
 	        this.instanciasbk=0;
 	        this.verificarTexto();
+			this.back = new backtracking();
+			this.console = new imprimir();
 	    }
 	    
 	    public void verificarTexto(){
@@ -92,11 +97,11 @@ public class GestorDeArchivo {
 			this.instanciasbk++;
 			int valor;
 			int ultimo_v=0;
-			if(meta!=0) {
+			if(meta>0) {
 				for(Maquina aux : this.maquinas) {
 					valor=aux.getProduccion();
 					
-					if(meta>0&&meta-ultimo_v>meta-valor&&meta-valor>0) {
+					if(meta-ultimo_v>meta-valor) {
 						r_parcial=this.algoBKTK(meta-valor);
 						r_parcial.add(aux);
 						if(resultado.isEmpty()||resultado.size()>r_parcial.size())
@@ -107,21 +112,16 @@ public class GestorDeArchivo {
 			}
 			return resultado;
 		}
+		
 	    public void backtracking(){
 	        ArrayList<Maquina> aux = this.algoBKTK(produccion);
 	        int pTotal = 0;
-	        System.out.println("=== Backtracking ===");
-			System.out.println("Secuencia de maquinas:");
-	        for(Maquina m: aux){
-	            System.out.println(m);
-	        }
 	        for(Maquina m: aux){
 	            pTotal += m.getProduccion();
 	        }
-	        System.out.println("Total piezas producidas: " + pTotal);
-	        System.out.println("Puestas en funcionamiento: " + aux.size());
-	        System.out.println("Instancias generadas: "+this.instanciasbk);
+	        console.mostrar("Backtracking", aux, produccion, pTotal, this.instanciasbk);
 	    }
+
 		private ArrayList<Maquina> algoGD(int meta){
 			ArrayList<Maquina> resultado= new ArrayList<>();
 			Maquina r_parcial=null;
@@ -148,21 +148,20 @@ public class GestorDeArchivo {
 			}
 			return resultado;
 		}
+
 	    public void greedy(){
 	        ArrayList<Maquina> aux = this.algoGD(produccion);
 	        int pTotal = 0;
-	        System.out.println("=== Greedy ===");
-	        System.out.println("Secuencia de maquinas:");
-	         for(Maquina m: aux){
-	            System.out.println(m);
-	        }
 	        for(Maquina m: aux){
 	            pTotal += m.getProduccion();
 	        }
-			System.out.println("Total piezas producidas: " + pTotal);
-	        System.out.println("Puestas en funcionamiento: " + aux.size());
-	        System.out.println("Instancias generadas: "+this.instanciasgd);
+			console.mostrar("Greedy", aux, produccion, pTotal, this.instanciasgd);
 	    }
+
+		public void pruebaBacktrack(){
+			back.backtrackingTest(produccion, maquinas);
+		}
+
 	}
 
 
