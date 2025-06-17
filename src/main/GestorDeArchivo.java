@@ -1,20 +1,23 @@
 package main;
-import grafos.*;
 import java.io.*;
 import java.util.ArrayList;
 
+
 public class GestorDeArchivo {
-	  private GC<Maquina> maquinas;
+	  private ArrayList<Maquina> maquinas;
 	    private int produccion;
 	    private File pedido;
-	    private ValorMaquina v;
 	    private boolean exists;
+	    private int instanciasbk;
+	    private int instanciasgd;
 
 	    public GestorDeArchivo(String ruta){
 	        this.pedido = new File(ruta);
 	        this.exists=false;
+	        this.maquinas=new ArrayList<>();
 	        this.produccion = -1;
-	        this.v = new ValorMaquina();
+	        this.instanciasgd=0;
+	        this.instanciasbk=0;
 	        this.verificarTexto();
 	    }
 	    
@@ -26,7 +29,6 @@ public class GestorDeArchivo {
 	                }
 	                else {
 	                	this.exists=true;
-	                	this.maquinas=new GC<Maquina>();
 	                }
 	                BufferedReader reader= new BufferedReader(new FileReader(this.pedido));
 	                String linea;
@@ -49,13 +51,20 @@ public class GestorDeArchivo {
 		                }
 		                reader.close();
 	                }catch(Exception e){
-	                	System.out.println("La estructura del archivo no es la esperada.\n ej."
-	                			+ "1ra linea: <Pedido de produccion>\n"
-	                			+ "2da linea: M1,<capacidad de produccion> \n"
-	                			+"......"
-	                			+ "Nva linea: MN,<capacidad de produccion>");	                }
+	                	this.exists=false;
+	                	System.out.print(e);
+	                	System.out.println("La estructura del archivo no es la esperada.\n "
+	                			+ "Una estructura valida seria :\n"
+	                			+"1ra linea: <Pedido de piezas>\n"
+	                			+ "2da linea: M1,<capacidad de produccion>\n"
+	                			+ "3ra linea: M2,<capacidad de produccion> \n"
+	                			+"......\n"
+	                			+ "Nva linea: MN,<capacidad de produccion>");	                
+	                	}
+	    
 	            }catch(Exception e){
 	                System.out.println(e);
+	                this.exists=false;
 	            }
 	    
 	        }
@@ -72,11 +81,34 @@ public class GestorDeArchivo {
 				String n_maquina=l.substring(indice_m+1, indice_p);
 				String n_produ=l.substring(indice_p+1);
 				Maquina m= new Maquina(Integer.parseInt(n_maquina),Integer.parseInt(n_produ));
-				this.maquinas.addN(m);
+				this.maquinas.add(m);
 			}
 	    }
+		
+		
+		private ArrayList<Maquina> algoBKTK(int meta){
+			ArrayList<Maquina> resultado= new ArrayList<>();
+			ArrayList<Maquina> r_parcial;
+			this.instanciasbk++;
+			int valor;
+			int ultimo_v=0;
+			if(meta!=0) {
+				for(Maquina aux : this.maquinas) {
+					valor=aux.getProduccion();
+					
+					if(meta>0&&meta-ultimo_v>meta-valor&&meta-valor>0) {
+						r_parcial=this.algoBKTK(meta-valor);
+						r_parcial.add(aux);
+						if(resultado.isEmpty()||resultado.size()>r_parcial.size())
+							resultado=r_parcial;
+						
+					}
+				}
+			}
+			return resultado;
+		}
 	    public void backtracking(){
-	        ArrayList<Maquina> aux = this.maquinas.sumaDeVerticesBackTracking(produccion, v);
+	        ArrayList<Maquina> aux = this.algoBKTK(produccion);
 	        int pTotal = 0;
 	        System.out.println("=== Backtracking ===");
 			System.out.println("Secuencia de maquinas:");
@@ -88,9 +120,36 @@ public class GestorDeArchivo {
 	        }
 	        System.out.println("Total piezas producidas: " + pTotal);
 	        System.out.println("Puestas en funcionamiento: " + aux.size());
+	        System.out.println("Instancias generadas: "+this.instanciasbk);
 	    }
+		private ArrayList<Maquina> algoGD(int meta){
+			ArrayList<Maquina> resultado= new ArrayList<>();
+			Maquina r_parcial=null;
+			this.instanciasgd++;
+			int valor=0;
+			if(meta<=0)
+				return resultado;
+			for(Maquina aux: this.maquinas) {
+				if(meta<aux.getProduccion()&&valor!=0) {
+					if(valor>aux.getProduccion()) {
+						valor=aux.getProduccion();
+						r_parcial=aux;
+					}
+					
+				}
+				else {
+					valor=aux.getProduccion();
+					r_parcial=aux;
+				}
+			}
+			if(valor!=0) {
+				resultado.add(r_parcial);
+				resultado.addAll(this.algoGD(meta-valor));
+			}
+			return resultado;
+		}
 	    public void greedy(){
-	        ArrayList<Maquina> aux = this.maquinas.sumaDeVerticesGreedy(produccion, v);
+	        ArrayList<Maquina> aux = this.algoGD(produccion);
 	        int pTotal = 0;
 	        System.out.println("=== Greedy ===");
 	        System.out.println("Secuencia de maquinas:");
@@ -102,6 +161,7 @@ public class GestorDeArchivo {
 	        }
 			System.out.println("Total piezas producidas: " + pTotal);
 	        System.out.println("Puestas en funcionamiento: " + aux.size());
+	        System.out.println("Instancias generadas: "+this.instanciasgd);
 	    }
 	}
 
