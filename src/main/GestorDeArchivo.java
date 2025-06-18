@@ -1,6 +1,7 @@
 package main;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 
 public class GestorDeArchivo {
@@ -8,6 +9,7 @@ public class GestorDeArchivo {
 	    private int produccion;
 	    private File pedido;
 	    private boolean exists;
+	    private HashMap<Integer,ArrayList<Maquina>> repeticiones;
 	    private int instanciasbk;
 	    private int instanciasgd;
 
@@ -16,6 +18,7 @@ public class GestorDeArchivo {
 	        this.exists=false;
 	        this.maquinas=new ArrayList<>();
 	        this.produccion = -1;
+	        this.repeticiones=new HashMap<>();
 	        this.instanciasgd=0;
 	        this.instanciasbk=0;
 	        this.verificarTexto();
@@ -91,20 +94,31 @@ public class GestorDeArchivo {
 			ArrayList<Maquina> r_parcial;
 			this.instanciasbk++;
 			int valor;
-			int ultimo_v=0;
-			if(meta>0) {
-				for(Maquina aux : this.maquinas) {
-					valor=aux.getProduccion();
-					
-					if(meta-ultimo_v>meta-valor) {
-						r_parcial=this.algoBKTK(meta-valor);
+			if(meta==0)
+				return new ArrayList<>();
+			if(this.repeticiones.containsKey(meta))
+				return new ArrayList<>(this.repeticiones.get(meta));
+			for(Maquina aux : this.maquinas) {
+				valor=aux.getProduccion();
+				
+				if(meta-valor>=0) {
+					r_parcial=this.algoBKTK(meta-valor);
+					if((r_parcial==null&&meta-valor==0)||r_parcial!=null) {
 						r_parcial.add(aux);
-						if(resultado.isEmpty()||resultado.size()>r_parcial.size())
-							resultado=r_parcial;
-						
+												
 					}
+
+					
+					if(resultado.isEmpty()||resultado.size()>r_parcial.size())
+						resultado=r_parcial;
+					
 				}
 			}
+			if(resultado!=null) 
+					this.repeticiones.put(meta,resultado);
+				
+			
+
 			return resultado;
 		}
 	    public void backtracking(){
@@ -127,19 +141,12 @@ public class GestorDeArchivo {
 			Maquina r_parcial=null;
 			this.instanciasgd++;
 			int valor=0;
-			if(meta<=0)
-				return resultado;
 			for(Maquina aux: this.maquinas) {
-				if(meta<aux.getProduccion()&&valor!=0) {
-					if(valor>aux.getProduccion()) {
+				if(meta>=aux.getProduccion()&&valor<aux.getProduccion()) {
 						valor=aux.getProduccion();
 						r_parcial=aux;
-					}
 					
-				}
-				else {
-					valor=aux.getProduccion();
-					r_parcial=aux;
+					
 				}
 			}
 			if(valor!=0) {

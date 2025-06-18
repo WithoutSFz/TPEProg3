@@ -15,5 +15,5 @@ public class ejecutable {
 		}
 		//te dejo comentado el view porque vi que no era necesario en el TPE por lo que entendi
     	//datos.getMaquinas().view();
-	}
+	} 
 }
