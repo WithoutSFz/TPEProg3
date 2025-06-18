@@ -4,7 +4,7 @@ import java.util.Collections;
 import main.*;
 
 public class backtracking {
-    private ArrayList<Maquina> mejorComb;                        //aca almacenamos la mejor combinacion hasta el momento
+    private ArrayList<Maquina> mejorComb;                                //aca almacenamos la mejor combinacion hasta el momento
     private int minMaqEncontradas;                                       //aca se almacena la cantidad de maquinas recorridas hasta llegar a lo pedido
     private int piezasProducidasComb;
     private int produccion;
@@ -58,7 +58,6 @@ public class backtracking {
                     mejorComb = new ArrayList<>(combActual);
                     piezasProducidasComb = piezasGeneradas;
                 }
-
             }
             return;                                                         // si alcanzamos el valor de produccion lo terminamos
         }

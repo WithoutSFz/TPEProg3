@@ -165,15 +165,16 @@ public class GestorDeArchivo {
 			this.imprimir("Backtracking de prueba",back.getCombMaquinas(), back.getPiezasTotales(),  back.getPuestas());
 		}
 
-		public void imprimir(String titulo, ArrayList<Maquina> maquinas, int piezasProducidas, int puestas){
+		public void imprimir(String titulo, ArrayList<Maquina> maquinasAux, int piezasProducidas, int instancias){
         	System.out.println("======= " + titulo + " =======");
         	System.out.println("Secuencia de maquinas:");
-        	for(Maquina m : maquinas){
+        	for(Maquina m : maquinasAux){
             	System.out.println(m);
         	}
         	System.out.println("Piezas a producir: " + this.produccion);
         	System.out.println("Total piezas producidas: " + piezasProducidas);
-        	System.out.println("Instancias generadas: " + puestas);
+			System.out.println("Puestas en funcionamiento: " + (maquinasAux.size()));
+        	System.out.println("Instancias generadas: " + instancias);
     	}
 	}
 
