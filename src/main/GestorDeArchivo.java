@@ -133,9 +133,17 @@ public class GestorDeArchivo {
 	        for(Maquina m: aux){
 	            pTotal += m.getProduccion();
 	        }
-	        this.imprimir("Backtracking", aux, pTotal,this.instanciasbk);
-
+	        if(pTotal==this.produccion)
+	        	this.imprimir("Backtracking", aux, pTotal,this.instanciasbk);
+	        else
+	        	System.out.println("No se encontro solucion optima para el algoritmo BackTracking");
+	        	
 	    }
+	    /*
+	     * La implementacion de este algoritmo Greedy es simple y contreta, por lo que no fue necesario de una estructura compleja
+	     * Recorre la lista de máquinas buscando la que tenga la mejor producción posible sin superar la meta.
+	     * No es necesario un caso base explícito si no se encuentra una máquina adecuada la varaiable valor se mantiene en 0 y no se realiza una nueva llamada recursiva.
+	     */
 		private ArrayList<Maquina> algoGD(int meta){
 			ArrayList<Maquina> resultado= new ArrayList<>();
 			Maquina r_parcial=null;
@@ -161,8 +169,10 @@ public class GestorDeArchivo {
 	        for(Maquina m: aux){
 	            pTotal += m.getProduccion();
 	        }
-	        this.imprimir("Greedy",aux,pTotal,this.instanciasgd);
-			
+	        if(pTotal==this.produccion)
+	        	this.imprimir("Greedy",aux,pTotal,this.instanciasgd);
+	        else
+	        	System.out.println("No se encontro solucion optima para el algoritmo Greedy");
 	    }
 		private void imprimir(String titulo, ArrayList<Maquina> maquinasAux, int piezasProducidas, int instancias){
         	System.out.println("======= " + titulo + " =======");
