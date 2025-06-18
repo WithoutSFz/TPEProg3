@@ -11,7 +11,7 @@ public class ejecutable {
 		if(datos.exists()) {
 			datos.greedy();
 			datos.pruebaBacktrack();			//lo puse antes para que puedas ver el funcionamiento
-			datos.backtracking();
+			//datos.backtracking();
 		}
 	}
 }

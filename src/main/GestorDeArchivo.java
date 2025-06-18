@@ -1,6 +1,9 @@
 package main;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+
 import algoritmos.*;
 
 
@@ -85,6 +88,7 @@ public class GestorDeArchivo {
 				String n_produ=l.substring(indice_p+1);
 				Maquina m= new Maquina(Integer.parseInt(n_maquina),Integer.parseInt(n_produ));
 				this.maquinas.add(m);
+				//Collections.sort(maquinas, Collections.reverseOrder());				//para ordenar las maquinas cada que se añade una
 			}
 	    }
 		

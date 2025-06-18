@@ -4,25 +4,25 @@ import java.util.Collections;
 import main.*;
 
 public class backtracking {
-    private ArrayList<Maquina> mejorCombinacionActual;                        //aca almacenamos la mejor combinacion hasta el momento
-    private int minMaquinasEncontradas;                                       //aca se almacena la cantidad de maquinas recorridas hasta llegar a lo pedido
-    private int piezasProducidasMejorCombinacion;
+    private ArrayList<Maquina> mejorComb;                        //aca almacenamos la mejor combinacion hasta el momento
+    private int minMaqEncontradas;                                       //aca se almacena la cantidad de maquinas recorridas hasta llegar a lo pedido
+    private int piezasProducidasComb;
     private int produccion;
     private int instancias;
     private ArrayList<Maquina> maquinas;
 
     public backtracking(){                         //instanciamos
-        this.mejorCombinacionActual = new ArrayList<>();
-        this.minMaquinasEncontradas = Integer.MAX_VALUE;
-        this.piezasProducidasMejorCombinacion = Integer.MAX_VALUE;
+        this.mejorComb = new ArrayList<>();
+        this.minMaqEncontradas = Integer.MAX_VALUE;
+        this.piezasProducidasComb = Integer.MAX_VALUE;
     }
     
     public int getPiezasTotales(){
-        return this.piezasProducidasMejorCombinacion;
+        return this.piezasProducidasComb;
     }
 
     public ArrayList<Maquina> getCombMaquinas(){
-        return this.mejorCombinacionActual;
+        return this.mejorComb;
     }
 
     public int getPuestas(){
@@ -32,31 +32,31 @@ public class backtracking {
     public ArrayList<Maquina> backtrackingTest(int prod, ArrayList<Maquina> list) {
         this.produccion = prod;
         this.maquinas = list;
-        this.mejorCombinacionActual.clear();                                                                //limpiamos cualquier contenido anterior
-        this.minMaquinasEncontradas = Integer.MAX_VALUE;                                                    //le damos el maximo valor posible asi empieza desde lo mas alto
-        this.piezasProducidasMejorCombinacion = Integer.MAX_VALUE;                                          //lo mismo
-        Collections.sort(maquinas, Collections.reverseOrder());                                             //ordenamos las maquinas de mayor a menor produccion
+        this.mejorComb.clear();                                                                //limpiamos cualquier contenido anterior
+        this.minMaqEncontradas = Integer.MAX_VALUE;                                             //le damos el maximo valor posible asi empieza desde lo mas alto
+        this.piezasProducidasComb = Integer.MAX_VALUE;                                          //lo mismo
+        Collections.sort(maquinas, Collections.reverseOrder());                                 //ordenamos las maquinas de mayor a menor produccion
 
         backtrackMaquinas(new ArrayList<>(), 0, maquinas);                                  // inicia el backtracking
-        return mejorCombinacionActual;                                                                     //devolvemos la mejor combinacion post recursiones
+        return mejorComb;                                                                     //devolvemos la mejor combinacion post recursiones
     }
 
 
-    private void backtrackMaquinas(ArrayList<Maquina> combinacionActual, int piezasGeneradas, ArrayList<Maquina> maquinasDisponibles) {
+    private void backtrackMaquinas(ArrayList<Maquina> combActual, int piezasGeneradas, ArrayList<Maquina> maquinasDisponibles) {
         instancias++;
-        if (piezasGeneradas >= produccion) {
+        if (piezasGeneradas >= produccion) {                    //comprobamos si todavia no llegamos al total buscado
             
-            if (combinacionActual.size() < minMaquinasEncontradas) {        // verificamos si esta combinación es mejor que la anterior
+            if (combActual.size() < minMaqEncontradas) {        // verificamos si esta combinación es mejor que la anterior
 
-                minMaquinasEncontradas = combinacionActual.size();
-                mejorCombinacionActual = new ArrayList<>(combinacionActual);
-                piezasProducidasMejorCombinacion = piezasGeneradas;
+                minMaqEncontradas = combActual.size();
+                mejorComb = new ArrayList<>(combActual);
+                piezasProducidasComb = piezasGeneradas;
 
-            } else if (combinacionActual.size() == minMaquinasEncontradas) { //verificamos si son el mismo numero de maquinas pero con menor sobra de piezas
+            } else if (combActual.size() == minMaqEncontradas) { //verificamos si son el mismo numero de maquinas pero con menor sobra de piezas
         
-                if (piezasGeneradas < piezasProducidasMejorCombinacion) {
-                    mejorCombinacionActual = new ArrayList<>(combinacionActual);
-                    piezasProducidasMejorCombinacion = piezasGeneradas;
+                if (piezasGeneradas < piezasProducidasComb) {
+                    mejorComb = new ArrayList<>(combActual);
+                    piezasProducidasComb = piezasGeneradas;
                 }
 
             }
@@ -64,24 +64,23 @@ public class backtracking {
         }
 
         
-        if (combinacionActual.size() >= minMaquinasEncontradas) {           // otro criterio de corte segun cantidad de maquinas usadas
+        if (combActual.size() >= minMaqEncontradas) {                       // otro criterio de poda segun cantidad de maquinas usadas (buscamos la menor)
             return;
         }
 
         
         
-        for (int i = 0; i < maquinasDisponibles.size(); i++) {              // aca empieza la recursion
-            Maquina maquinaAux = maquinasDisponibles.get(i);
-            int piezasMaquina = maquinaAux.getProduccion();
+        for (int i = 0; i < maquinasDisponibles.size(); i++) {
+            Maquina aux = maquinasDisponibles.get(i);
+            int piezasMaquina = aux.getProduccion();                 //cuantas piezas genera la maquina
 
-            
-            if (piezasGeneradas + piezasMaquina > produccion && (combinacionActual.size() + 1 >= minMaquinasEncontradas)) {     //criterio de poda
-                continue;                                                   // nos saltamos la opcion si es el mismo resultado que el anterior
+            if (piezasGeneradas + piezasMaquina > produccion && (combActual.size() + 1 >= minMaqEncontradas)) { 
+                return;                                                   // nos saltamos la opcion si es el mismo resultado que el anterior
             }
 
-            combinacionActual.add(maquinaAux);                                                          // Añadimos la maquina a la combinacion actual
-            backtrackMaquinas(combinacionActual, piezasGeneradas + piezasMaquina, maquinasDisponibles); // le enviamos el valor de i desde 0 asi recorre todo el List
-            combinacionActual.remove(combinacionActual.size() - 1);                         //eliminar la última máquina añadida para comprobar otra de ser el caso
+            combActual.add(aux);                                                          // Añadimos la maquina a la combinacion actual
+            backtrackMaquinas(combActual, piezasGeneradas + piezasMaquina, maquinasDisponibles); //llamamos a recursion
+            combActual.remove(combActual.size() - 1);                         //elimina la ultima maquina agregada para probar la siguiente opcion
         }
     }
 }
