@@ -67,7 +67,6 @@ public class GestorDeArchivo {
 	    
 	            }catch(Exception e){
 	                System.out.println(e);
-	                this.exists=false;
 	            }
 	    
 	        }
@@ -75,7 +74,7 @@ public class GestorDeArchivo {
 	    	return this.exists;
 	    }
 	    
-		public void addMachine(String l) {
+		private void addMachine(String l) {
 			if(!l.isEmpty()) {
 				int indice_m=l.indexOf("M");
 				if(indice_m==-1)
@@ -87,10 +86,19 @@ public class GestorDeArchivo {
 				this.maquinas.add(m);
 			}
 	    }
-		
-		
+		/*
+		 * La tactica para esta busqueda exhaustiva fue  generar una coleccion de soluciones parciales
+		 * para acotar las llamadas recursivas redundantes .
+		 * 
+		 * Las maquinas  fueron almacenadas en un atributo de clase usando un ArrayList por practicidad para iterar.
+		 * Otro atributo de la clase es repeticiones que es nuestra cache de soluciones parciales.
+		 * A causa del diseño el algoritmo solo tiene un unico parametro, siendo meta nuestra "meta de produccion" se ira reduciendo en cada llamado hasta llegar a 0.
+		 * El caso base meta=0 implica que ya esta resuelto el sub-problema por lo que devuelve una lista vacia. Si la instancia ya fue resuelta
+		 * devuelve del hashmap para esa instancia de meta la solución almacenada en el HashMap. Si no hay registro de una solucion prueba con cada maquina mientras no se exceda hasta dar con la solucion optima.
+		 * Una vez encontrada la solucion optima esta se almacena en el cache antes de retornarla.
+		*/
 		private ArrayList<Maquina> algoBKTK(int meta){
-			ArrayList<Maquina> resultado= new ArrayList<>();
+			ArrayList<Maquina> resultado= null;
 			ArrayList<Maquina> r_parcial;
 			this.instanciasbk++;
 			int valor;
@@ -98,20 +106,18 @@ public class GestorDeArchivo {
 				return new ArrayList<>();
 			if(this.repeticiones.containsKey(meta))
 				return new ArrayList<>(this.repeticiones.get(meta));
+			
 			for(Maquina aux : this.maquinas) {
 				valor=aux.getProduccion();
 				
 				if(meta-valor>=0) {
 					r_parcial=this.algoBKTK(meta-valor);
-					if((r_parcial==null&&meta-valor==0)||r_parcial!=null) {
+					
+					if(r_parcial!=null) {
 						r_parcial.add(aux);
-												
-					}
-
-					
-					if(resultado.isEmpty()||resultado.size()>r_parcial.size())
+						if(resultado==null||resultado.size()>r_parcial.size())
 						resultado=r_parcial;
-					
+					}
 				}
 			}
 			if(resultado!=null) 
@@ -124,17 +130,11 @@ public class GestorDeArchivo {
 	    public void backtracking(){
 	        ArrayList<Maquina> aux = this.algoBKTK(produccion);
 	        int pTotal = 0;
-	        System.out.println("=== Backtracking ===");
-			System.out.println("Secuencia de maquinas:");
-	        for(Maquina m: aux){
-	            System.out.println(m);
-	        }
 	        for(Maquina m: aux){
 	            pTotal += m.getProduccion();
 	        }
-	        System.out.println("Total piezas producidas: " + pTotal);
-	        System.out.println("Puestas en funcionamiento: " + aux.size());
-	        System.out.println("Instancias generadas: "+this.instanciasbk);
+	        this.imprimir("Backtracking", aux, pTotal,this.instanciasbk);
+
 	    }
 		private ArrayList<Maquina> algoGD(int meta){
 			ArrayList<Maquina> resultado= new ArrayList<>();
@@ -158,18 +158,23 @@ public class GestorDeArchivo {
 	    public void greedy(){
 	        ArrayList<Maquina> aux = this.algoGD(produccion);
 	        int pTotal = 0;
-	        System.out.println("=== Greedy ===");
-	        System.out.println("Secuencia de maquinas:");
-	         for(Maquina m: aux){
-	            System.out.println(m);
-	        }
 	        for(Maquina m: aux){
 	            pTotal += m.getProduccion();
 	        }
-			System.out.println("Total piezas producidas: " + pTotal);
-	        System.out.println("Puestas en funcionamiento: " + aux.size());
-	        System.out.println("Instancias generadas: "+this.instanciasgd);
+	        this.imprimir("Greedy",aux,pTotal,this.instanciasgd);
+			
 	    }
+		private void imprimir(String titulo, ArrayList<Maquina> maquinasAux, int piezasProducidas, int instancias){
+        	System.out.println("======= " + titulo + " =======");
+        	System.out.println("Secuencia de maquinas:");
+        	for(Maquina m : maquinasAux){
+            	System.out.println(m);
+        	}
+        	System.out.println("Piezas a producir: " + this.produccion);
+        	System.out.println("Total piezas producidas: " + piezasProducidas);
+			System.out.println("Puestas en funcionamiento: " + (maquinasAux.size()));
+        	System.out.println("Estados generados:  " + instancias);
+    	}
 	}
 
 
