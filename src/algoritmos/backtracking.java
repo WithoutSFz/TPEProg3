@@ -10,16 +10,25 @@ public class backtracking {
     private int produccion;
     private int instancias;
     private ArrayList<Maquina> maquinas;
-    private imprimir console;
 
     public backtracking(){                         //instanciamos
         this.mejorCombinacionActual = new ArrayList<>();
         this.minMaquinasEncontradas = Integer.MAX_VALUE;
         this.piezasProducidasMejorCombinacion = Integer.MAX_VALUE;
-        this.console = new imprimir();
     }
     
-    
+    public int getPiezasTotales(){
+        return this.piezasProducidasMejorCombinacion;
+    }
+
+    public ArrayList<Maquina> getCombMaquinas(){
+        return this.mejorCombinacionActual;
+    }
+
+    public int getPuestas(){
+        return this.instancias;
+    }
+
     public ArrayList<Maquina> backtrackingTest(int prod, ArrayList<Maquina> list) {
         this.produccion = prod;
         this.maquinas = list;
@@ -29,11 +38,8 @@ public class backtracking {
         Collections.sort(maquinas, Collections.reverseOrder());                                             //ordenamos las maquinas de mayor a menor produccion
 
         backtrackMaquinas(new ArrayList<>(), 0, maquinas);                                  // inicia el backtracking
-        console.mostrar("Backtracking 2 la venganza", this.mejorCombinacionActual, this.produccion, this.piezasProducidasMejorCombinacion, this.instancias); //imprimimos por consola
         return mejorCombinacionActual;                                                                     //devolvemos la mejor combinacion post recursiones
     }
-
-
 
 
     private void backtrackMaquinas(ArrayList<Maquina> combinacionActual, int piezasGeneradas, ArrayList<Maquina> maquinasDisponibles) {

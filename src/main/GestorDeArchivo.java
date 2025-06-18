@@ -12,7 +12,6 @@ public class GestorDeArchivo {
 	    private int instanciasbk;
 	    private int instanciasgd;
 		private backtracking back;
-		private imprimir console;
 
 	    public GestorDeArchivo(String ruta){
 	        this.pedido = new File(ruta);
@@ -23,7 +22,6 @@ public class GestorDeArchivo {
 	        this.instanciasbk=0;
 	        this.verificarTexto();
 			this.back = new backtracking();
-			this.console = new imprimir();
 	    }
 	    
 	    public void verificarTexto(){
@@ -119,7 +117,7 @@ public class GestorDeArchivo {
 	        for(Maquina m: aux){
 	            pTotal += m.getProduccion();
 	        }
-	        console.mostrar("Backtracking", aux, produccion, pTotal, this.instanciasbk);
+	        this.imprimir("Backtracking", aux, pTotal, this.instanciasbk);
 	    }
 
 		private ArrayList<Maquina> algoGD(int meta){
@@ -155,13 +153,24 @@ public class GestorDeArchivo {
 	        for(Maquina m: aux){
 	            pTotal += m.getProduccion();
 	        }
-			console.mostrar("Greedy", aux, produccion, pTotal, this.instanciasgd);
+			this.imprimir("Greedy", aux, pTotal, this.instanciasgd);
 	    }
 
 		public void pruebaBacktrack(){
 			back.backtrackingTest(produccion, maquinas);
+			this.imprimir("Backtracking de prueba",back.getCombMaquinas(), back.getPiezasTotales(),  back.getPuestas());
 		}
 
+		public void imprimir(String titulo, ArrayList<Maquina> maquinas, int piezasProducidas, int puestas){
+        	System.out.println("======= " + titulo + " =======");
+        	System.out.println("Secuencia de maquinas:");
+        	for(Maquina m : maquinas){
+            	System.out.println(m);
+        	}
+        	System.out.println("Piezas a producir: " + this.produccion);
+        	System.out.println("Total piezas producidas: " + piezasProducidas);
+        	System.out.println("Instancias generadas: " + puestas);
+    	}
 	}
 
 
